@@ -64,25 +64,43 @@ async def analyze_image_endpoint(request: ImageRequest):
     model = genai.GenerativeModel('gemini-2.5-flash')
 
     prompt = """
-    Act as a forensic image analyst specialized in detecting digital manipulation and AI-generated content (Deepfakes/GenAI).
-    
-    Your task is to CRITICALLY analyze this image of a product to determine if the damage shown is REAL or FAKE/AI-GENERATED.
-    
-    Be extremely skeptical. Look for the following specific indicators of AI generation or editing:
-    1. **Inconsistent Lighting/Shadows**: Do shadows match the light sources? Are they too soft or in the wrong direction?
-    2. **Unnatural Textures**: Does the "damage" look like a flat texture pasted on? Is the screen crack too perfect or following a weird pattern?
-    3. **Impossible Geometry**: Do lines connect logically? Are there warping or bending artifacts near the damage?
-    4. **Text/Logo Artifacts**: If there is text or a logo, is it gibberish, misspelled, or blurry?
-    5. **Surface Blending**: Does the damaged area blend naturally with the surrounding surface, or does it look like a separate layer?
-    
-    Analyze the image step-by-step.
-    
-    Return a VALID JSON response with:
-    - "is_authentic": boolean (true ONLY if you are 100% sure it's real physical damage. If unsure or looks AI, false)
-    - "damage_status": string ("authentic_damage", "ai_generated_damage", "edited_damage", "no_damage")
-    - "confidence_score": float (0.0 to 1.0, where 1.0 is absolute certainty)
-    - "reasoning": list of strings (specific observations that led to your conclusion)
-    - "verdict": string (a short summary of why it's fake or real)
+    Act as a Senior Forensic Digital Media Analyst. Your objective is to perform a multi-layered authentication of the provided image to detect GenAI (Generative AI), deepfakes, or advanced digital manipulation.
+
+    Perform a step-by-step forensic "Stress Test" on the image using these specialized criteria:
+
+    1. GLOBAL COHERENCE & PHYSICS:
+    - Shadows & Reflections: Do reflections show the correct environment? Are shadows physically consistent with light sources (check for "detached" shadows)?
+    - Perspective & Vanishing Points: Do the lines of the object and background converge at a logically consistent vanishing point?
+    - Gravity & Depth: Do objects appear to "float" or intersect with surfaces in an impossible way (e.g., a phone merging with a hand)?
+
+    2. TEXTURE & GENERATIVE ARTIFACTS:
+    - High-Frequency Noise: Look for "Generative Sheen" (unnatural smoothness) or "Checkerboard Artifacts" common in GANs/Diffusion models.
+    - Micro-Inconsistencies: Check for warped edges, "bleeding" colors, or textures that change density abruptly near a point of interest.
+    - Cracks/Defects: Do cracks follow the physical stress properties of the material (glass vs. plastic), or do they look like a superimposed brush-stroke pattern?
+
+    3. SEMANTIC & SYMBOLIC ACCURACY:
+    - Text/Logos: Analyze brand logos or text. Are there subtle misspellings, warped characters, or "haloing" around the edges of the font?
+    - Contextual Logic: Are background elements nonsensical (e.g., stairs leading nowhere, extra fingers, impossible clock faces)?
+
+    4. EDGE & BLENDING ANALYSIS:
+    - Transition Zones: Zoom into the boundary between the "damaged" area and the "original" area. Look for pixel-level discontinuities, blurring masks, or "double-edges" indicating a composite.
+
+    STRICT OUTPUT REQUIREMENT:
+    Return ONLY a valid JSON object with the following keys:
+    {
+    "is_authentic": boolean,
+    "damage_status": "authentic_damage" | "ai_generated_damage" | "edited_damage" | "no_damage" | "fake_image_total",
+    "confidence_score": float (0.00 to 1.00),
+    "forensic_flags": [
+        {
+        "indicator": "string",
+        "severity": "high" | "medium" | "low",
+        "observation": "detailed technical description"
+        }
+    ],
+    "reasoning_summary": "string",
+    "verdict": "Final definitive statement"
+    }
     """
 
     try:
