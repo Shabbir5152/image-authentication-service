@@ -42,6 +42,11 @@ def fetch_image(url: str):
 def read_root():
     return {"message": "Image Authentication Service is running. Use POST /analyze to check images. Docs at /docs"}
 
+@app.get("/analyze")
+async def analyze_image_get(url: str):
+    return await analyze_image_endpoint(ImageRequest(url=url))
+
+
 @app.post("/analyze")
 async def analyze_image_endpoint(request: ImageRequest):
     """
