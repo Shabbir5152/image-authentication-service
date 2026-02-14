@@ -1,4 +1,6 @@
-google-generativeai
-python-dotenv
+fastapi
+uvicorn
 requests
-Pillow
+pillow
+python-dotenv
+google-generativeai
